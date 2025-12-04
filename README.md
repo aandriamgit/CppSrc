@@ -6,6 +6,8 @@
 
 # HOW TO USE
 
+note, the following is from `C++ for Godot with GDExtension – David Snopek – GodotCon 2024` https://youtu.be/4R0uoBJ5XSk, i'm just taking the notes
+
 ## in the .h file
 * its better to publicly inherit from a godot class
 * add the function `GDCLASS([the class name], [the parent class]);`
