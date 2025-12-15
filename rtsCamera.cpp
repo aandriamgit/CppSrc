@@ -13,7 +13,7 @@ void rtsCamera::_bind_methods()
 }
 
 rtsCamera::rtsCamera() : _moveSpeed(0.8), _rotateKeySpeed(1.5), _zoomSpeed(3.0),
-	_minZoom(-20), _maxZoom(20), _mouseSensitivity(0.3)
+	_minZoom(-3), _maxZoom(40), _mouseSensitivity(0.3)
 {
 }
 
@@ -38,10 +38,14 @@ void rtsCamera::_process(float delta)
 	Vector3	tmp;
 	float	rotateKey;
 	int		zoomDir;
+	float	yaw;
+	Basis	yaw_basis;
 
+	yaw = get_rotation_degrees().y;
+	yaw_basis = Basis(Vector3(0, 1, 0), Math::deg_to_rad(yaw));
 	inputDir = Input::get_singleton()->get_vector("ui_left", "ui_right",
 			"ui_up", "ui_down");
-	movementDir = (get_transform().basis.xform(Vector3(inputDir.x, 0,
+	movementDir = (yaw_basis.xform(Vector3(inputDir.x, 0,
 					inputDir.y))).normalized();
 	rotateKey = Input::get_singleton()->get_axis("rotate_left", "rotate_right");
 	zoomDir = (((int)(Input::get_singleton()->is_action_just_released("zoom_out")))
@@ -49,6 +53,7 @@ void rtsCamera::_process(float delta)
 	_moveTarget += _moveSpeed * movementDir;
 	_rotateKeyTarget += rotateKey * _rotateKeySpeed;
 	_zoomTarget += zoomDir * _zoomSpeed;
+	_zoomTarget = CLAMP(_zoomTarget, _minZoom, _maxZoom);
 	set_position(get_position().lerp(_moveTarget, 0.08));
 	tmp = get_rotation_degrees();
 	tmp.y = _rotateKeyTarget;
@@ -70,7 +75,7 @@ void rtsCamera::_unhandled_input(const Ref<InputEvent> &event)
 		_rotateKeyTarget -= motion->get_relative().x * _mouseSensitivity;
 		current_rot = get_rotation_degrees();
 		current_rot.x -= motion->get_relative().y * _mouseSensitivity;
-		current_rot.x = CLAMP(current_rot.x, -20, 20);
+		current_rot.x = CLAMP(current_rot.x, -20, 70);
 		current_rot.y = _rotateKeyTarget;
 		set_rotation_degrees(get_rotation_degrees().lerp(current_rot, 0.3));
 	}
