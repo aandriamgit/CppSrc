@@ -13,7 +13,7 @@ void rtsCamera::_bind_methods()
 }
 
 rtsCamera::rtsCamera() : _moveSpeed(0.8), _rotateKeySpeed(1.5), _zoomSpeed(3.0),
-	_minZoom(-3), _maxZoom(40), _mouseSensitivity(0.3)
+	_minZoom(-3), _maxZoom(60), _mouseSensitivity(0.3)
 {
 }
 

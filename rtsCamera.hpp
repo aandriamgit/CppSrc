@@ -14,12 +14,6 @@ class rtsCamera : public godot::Node3D
 	GDCLASS(rtsCamera, Node3D);
 
   protected:
-	static void _bind_methods();
-	Node3D *_rotateX;
-	Node3D *_pivot;
-	Camera3D *_camera3d;
-	Vector3 _moveTarget;
-	float _moveSpeed;
 	float _rotateKeySpeed;
 	float _rotateKeyTarget;
 	float _zoomSpeed;
@@ -27,6 +21,12 @@ class rtsCamera : public godot::Node3D
 	float _minZoom;
 	float _maxZoom;
 	float _mouseSensitivity;
+	Camera3D *_camera3d;
+	Node3D *_rotateX;
+	Node3D *_pivot;
+	Vector3 _moveTarget;
+	float _moveSpeed;
+	static void _bind_methods();
 
   public:
 	rtsCamera();
