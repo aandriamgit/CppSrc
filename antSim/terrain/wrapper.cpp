@@ -32,7 +32,7 @@ void terrainAPI::initGeography()
 {
 	initTerrain(_terrain, 1);
 	_mi = Object::cast_to<MeshInstance3D>(get_child(0));
-	_mi->set_scale(Vector3(_terrain.mapSize, 1, _terrain.mapSize * 100));
+	_mi->set_scale(Vector3(_terrain.mapSize, 1, _terrain.mapSize));
 }
 
 void terrainAPI::_ready()

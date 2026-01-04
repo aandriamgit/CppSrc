@@ -12,8 +12,10 @@ enum type : uint8_t
 struct		terrain
 {
 	int		mapSize;
-	std::vector<float> height;
 	std::vector<type> terrainType;
+	std::vector<float> height;
+	std::vector<float> vertices;
+	std::vector<float> normals;
 };
 
 const int	getIndex(const terrain &t, const int x, const int y);
