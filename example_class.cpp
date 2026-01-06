@@ -1,5 +1,6 @@
 #include "example_class.h"
 
+
 void ExampleClass::_bind_methods() {
 	godot::ClassDB::bind_method(D_METHOD("print_type", "variant"), &ExampleClass::print_type);
 }
