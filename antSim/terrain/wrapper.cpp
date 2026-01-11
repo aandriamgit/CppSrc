@@ -1,7 +1,3 @@
-// #include "godot_cpp/classes/environment.hpp"
-// #include "godot_cpp/classes/world_environment.hpp"
-#include "godot_cpp/classes/object.hpp"
-#include "godot_cpp/variant/vector3.hpp"
 #include "terrainSystem.hpp"
 #include "wrapper.h"
 
@@ -13,31 +9,56 @@ terrainAPI::terrainAPI()
 {
 }
 
-void terrainAPI::initWorldEnv()
+void terrainAPI::initArrays(PackedVector3Array &vertices,
+	PackedVector3Array &normals, PackedInt32Array &indices)
 {
-	// _we = get_node<WorldEnvironment>("WorldEnvironment");
-	// if (_we)
-	// {
-	// 	Ref<Environment> env = _we->get_environment();
-	// 	if (env.is_valid())
-	// 	{
-	// 		env->set_background(godot::Environment::BG_COLOR);
-	// 		env->set_bg_color(Color(0.0, 206.0, 255.0));
-	// 		ok i give up
-	// 	}
-	// }
+	int			ix;
+	const int	idxCount = _terrain.indx.size();
+
+	const std::vector<float> &Vert = _terrain.vertices;
+	const std::vector<float> &Norm = _terrain.normals;
+	const std::vector<uint32_t> &indx = _terrain.indx;
+	vertices.resize(getVertMaxIndex(_terrain));
+	normals.resize(getVertMaxIndex(_terrain));
+	indices.resize(getIndxCount(_terrain));
+	Vector3 *vertPtr(vertices.ptrw());
+	Vector3 *normPtr(normals.ptrw());
+	int32_t *indxPtr(indices.ptrw());
+	for (size_t i = 0; i < vertices.size(); ++i)
+	{
+		ix = i * 3;
+		vertPtr[i] = Vector3(Vert[ix], Vert[ix + 1], Vert[ix + 2]);
+		normPtr[i] = Vector3(Norm[ix], Norm[ix + 1], Norm[ix + 2]);
+	}
+	for (int i = 0; i < idxCount; ++i)
+		indxPtr[i] = static_cast<int32_t>(indx[i]);
 }
 
 void terrainAPI::initGeography()
 {
-	initTerrain(_terrain, 1);
+	PackedVector3Array	vertices;
+	PackedVector3Array	normals;
+	PackedInt32Array	indx;
+	Array				arrays;
+
+	initTerrain(_terrain, 512);
+	godot::UtilityFunctions::print("Vertices: ", getVertMaxIndex(_terrain),
+		"\n");
+	godot::UtilityFunctions::print("Indices: ", getIndxCount(_terrain), "\n");
+	initArrays(vertices, normals, indx);
+	arrays.resize(Mesh::ARRAY_MAX);
+	arrays[Mesh::ARRAY_VERTEX] = vertices;
+	arrays[Mesh::ARRAY_NORMAL] = normals;
+	arrays[Mesh::ARRAY_INDEX] = indx;
+	Ref<ArrayMesh> mesh;
+	mesh.instantiate();
+	mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, arrays);
 	_mi = Object::cast_to<MeshInstance3D>(get_child(0));
-	_mi->set_scale(Vector3(_terrain.mapSize, 1, _terrain.mapSize));
+	_mi->set_mesh(mesh);
 }
 
 void terrainAPI::_ready()
 {
-	// initWorldEnv();
 	initGeography();
 }
 
